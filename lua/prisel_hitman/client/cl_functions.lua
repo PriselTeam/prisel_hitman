@@ -259,9 +259,9 @@ function Prisel.Hitman.OpenContracts()
   function priceEntry:Think()
     local text = self:GetText()
     if text ~= "" then
-      if not tonumber(text) then
-        self:SetText("")
-      end
+        if not tonumber(text) or string.match(text, "[^%d]") then
+            self:SetText(string.gsub(text, "[^%d]", ""))
+        end
     end
   end
 
