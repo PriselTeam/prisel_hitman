@@ -6,3 +6,25 @@ function Prisel.Hitman.GetConfig(value)
 
   return Prisel.Hitman.Config[value]
 end
+
+
+local PLAYER = FindMetaTable("Player")
+
+function PLAYER:IsHitman()
+  return self:GetNWBool("PRSL:HitmanValue")
+end
+
+function PLAYER:RequestHitman()
+  if CLIENT then
+    net.Start("Prisel.Hitman.HitmanNetworking")
+    net.WriteUInt(1, 4)
+    net.SendToServer()
+  elseif SERVER then
+    self:SetNWBool("PRSL:HitmanValue", not self:IsHitman())
+    if self:IsHitman() then
+      DarkRP.notify(self, 0, 4, "Vous êtes maintenant un chasseur de prime.")
+    else
+      DarkRP.notify(self, 1, 4, "Vous avez arrêtez la traque.")
+    end
+  end
+end

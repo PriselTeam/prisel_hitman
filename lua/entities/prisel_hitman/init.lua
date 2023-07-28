@@ -3,7 +3,7 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-	self:SetModel("models/breen.mdl")
+	self:SetModel(Prisel.Hitman.GetConfig("Model"))
 	self:SetBodygroup(1,1)
 	self:SetSolid(SOLID_BBOX)
 
@@ -16,6 +16,12 @@ function ENT:Initialize()
 
 	self:SetUseType(SIMPLE_USE)
 	self:DropToFloor()
+end
+
+function ENT:Think()
+	if Prisel.Hitman.GetConfig("Model") ~= self:GetModel() then
+		self:SetModel(Prisel.Hitman.GetConfig("Model"))
+	end
 end
 
 function ENT:OnTakeDamage()

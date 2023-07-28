@@ -271,16 +271,27 @@ function Prisel.Hitman.OpenContracts()
   buttonFaire:SetText("Faire un contrat")
   buttonFaire:SetFont(DarkRP.Library.Font(10))
   buttonFaire:SetTall(ScrH() * 0.05)
-  buttonFaire:SetBackgroundColor(DarkRP.Config.Colors.Red)
-
+  buttonFaire:SetBackgroundColor(DarkRP.Config.Colors.Blue)
 
   local buttonDevenir = vgui.Create("Prisel.Button", frame)
   buttonDevenir:Dock(BOTTOM)
   buttonDevenir:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.2, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.02)
-  buttonDevenir:SetText("Devenir Hitman")
+  buttonDevenir:SetText(LocalPlayer():IsHitman() and "Arrêter la traque" or "Rejoindre les chasseurs de primes")
   buttonDevenir:SetFont(DarkRP.Library.Font(10))
   buttonDevenir:SetTall(ScrH() * 0.05)
-  buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Green)
+  buttonDevenir:SetBackgroundColor(LocalPlayer():IsHitman() and DarkRP.Config.Colors.Red or DarkRP.Config.Colors.Green)
+
+  function buttonDevenir:DoClick()
+    LocalPlayer():RequestHitman()
+
+    if not LocalPlayer():IsHitman() then
+      buttonDevenir:SetText("Arrêter la traque")
+      buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Red)
+    else
+      buttonDevenir:SetText("Rejoindre les chasseurs de primes")
+      buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Green)
+    end
+  end
 end
 
 local PLAYER = FindMetaTable("Player")

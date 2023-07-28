@@ -55,3 +55,17 @@ function PLAYER:OpenContractMenu()
   net.Start("Prisel.Hitman.OpenMenu")
   net.Send(self)
 end
+
+function PLAYER:CanInteractNPC()
+  local hitman = ents.FindInSphere(self:GetPos(), 100)
+
+  for k, v in pairs(hitman) do
+      if v:GetClass() == "prisel_hitman" then
+          if v:GetPos():Distance(self:GetPos()) < 100 then
+              return true
+          end                
+      end
+  end
+
+  return false
+end

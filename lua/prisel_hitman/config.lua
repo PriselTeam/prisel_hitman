@@ -1,11 +1,13 @@
 Prisel = Prisel or {}
 Prisel.Hitman = Prisel.Hitman or {}
+Prisel.Hitman.Contracts = {}
 Prisel.Hitman.CanModifConfig = {
     ["superadmin"] = true,
 }
 
 Prisel.Hitman.Config = Prisel.Hitman.Config or {}
 
+Prisel.Hitman.Config.Model = "models/Humans/Group01/Female_06.mdl"
 Prisel.Hitman.Config.CommandConfig = "!cfghitman"
 
 Prisel.Hitman.Config.BlacklistedJob = {
