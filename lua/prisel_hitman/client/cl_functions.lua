@@ -179,7 +179,7 @@ function Prisel.Hitman.ConfigMenu()
         end
 
         function addButton:DoClick()
-            Derma_StringRequest("Ajouter un modèle factice", "Veuillez entrer un modèle factice à ajouter :", "", function(text)
+            Derma_StringRequest("Ajouter un modèle", "Veuillez entrer un modèle à ajouter :", "", function(text)
                 addFakeNPCModelEntry(k, text)
             end)
         end
@@ -188,7 +188,7 @@ end
 
 function Prisel.Hitman.OpenContracts()
   local frame = vgui.Create("Prisel.Frame")
-  frame:SetSize(DarkRP.ScrW * 0.5,DarkRP.ScrH * 0.55)
+  frame:SetSize(DarkRP.ScrW * 0.4,DarkRP.ScrH * 0.55)
   frame:Center()
   frame:SetTitle("Menu Contrat")
   frame:MakePopup()
@@ -267,15 +267,65 @@ function Prisel.Hitman.OpenContracts()
 
   local buttonFaire = vgui.Create("Prisel.Button", frame)
   buttonFaire:Dock(TOP)
-  buttonFaire:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.015, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.02)
+  buttonFaire:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.02, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.01)
   buttonFaire:SetText("Faire un contrat")
   buttonFaire:SetFont(DarkRP.Library.Font(10))
   buttonFaire:SetTall(ScrH() * 0.05)
   buttonFaire:SetBackgroundColor(DarkRP.Config.Colors.Blue)
 
+  function buttonFaire:DoClick()
+    if LocalPlayer():IsHitman() then
+        notification.AddLegacy("Vous êtes chasseur de primes, vous ne pouvez pas faire de contrat !", NOTIFY_ERROR, 5)
+        return
+    end
+
+    if not comboboxPlayer:GetSelectedValue() then
+        notification.AddLegacy("Vous devez choisir une cible !", NOTIFY_ERROR, 5)
+        return
+    end
+
+    local reasonText = reasonEntry:GetText()
+
+    print(reasonText)
+
+    if not DarkRP.Library.IsValidReason(reasonText) then
+        notification.AddLegacy("La raison est invalide !", NOTIFY_ERROR, 5)
+        return
+    end
+    
+    local priceText = priceEntry:GetText()
+    local price = tonumber(priceText)
+    if not price or price % 1 ~= 0 then
+        notification.AddLegacy("Le prix doit être un nombre entier !", NOTIFY_ERROR, 5)
+        return
+    end
+
+    if price < 0 then
+        notification.AddLegacy("Le prix doit être positif !", NOTIFY_ERROR, 5)
+        return
+    end
+
+    if price > LocalPlayer():getDarkRPVar("money") then
+        notification.AddLegacy("Vous n'avez pas assez d'argent !", NOTIFY_ERROR, 5)
+        return
+    end
+
+    if price > 1000000 then
+        notification.AddLegacy("Le prix ne peut pas dépasser 1 000 000 $ !", NOTIFY_ERROR, 5)
+        return
+    end
+
+    if Prisel.Hitman.Contracts[comboboxPlayer:GetSelectedValue():SteamID64()] then
+        notification.AddLegacy("Vous ne pouvez pas faire de contrat sur cette personne.", NOTIFY_ERROR, 5)
+        return
+    end
+
+    LocalPlayer():SendContrat(comboboxPlayer:GetSelectedValue(), reasonText, price)
+  end
+
   local buttonDevenir = vgui.Create("Prisel.Button", frame)
-  buttonDevenir:Dock(BOTTOM)
-  buttonDevenir:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.2, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.02)
+  buttonDevenir:Dock(TOP)
+  buttonDevenir:DockMargin(DarkRP.ScrW * 0.05,0, DarkRP.ScrW * 0.05, 0)
   buttonDevenir:SetText(LocalPlayer():IsHitman() and "Arrêter la traque" or "Rejoindre les chasseurs de primes")
   buttonDevenir:SetFont(DarkRP.Library.Font(10))
   buttonDevenir:SetTall(ScrH() * 0.05)
@@ -292,6 +342,14 @@ function Prisel.Hitman.OpenContracts()
       buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Green)
     end
   end
+
+  hook.Add("HUDPaint", "Prisel.Hitman.PaintContract", function()
+    if not IsValid(frame) then hook.Remove("HUDPaint", "Prisel.Hitman.PaintContract") return end
+    local target = comboboxPlayer:GetSelectedValue()
+    if IsValid(target) then
+    draw.SimpleTextOutlined("Contrat : " .. target:Nick(), DarkRP.Library.Font(15,0, "Montserrat Bold"), ScrW()/2, ScrH() * 0.02, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, color_black)
+    end
+  end)
 end
 
 local PLAYER = FindMetaTable("Player")
@@ -299,4 +357,21 @@ local PLAYER = FindMetaTable("Player")
 function PLAYER:RequestConfig()
   net.Start("Prisel.Hitman.RequestConfig")
   net.SendToServer()
+end
+
+function PLAYER:SendContrat(target, reason, price)
+    if not IsValid(target) then return end
+    if not isstring(reason) then return end
+    if not isnumber(price) then return end
+
+    if not DarkRP.Library.IsValidReason(reason) then return end
+    if price < 0 then return end
+    if price > 1000000 then return end
+    
+    net.Start("Prisel.Hitman.HitmanNetworking")
+    net.WriteUInt(2, 4)
+    net.WriteEntity(target)
+    net.WriteString(reason)
+    net.WriteInt(price, 20)
+    net.SendToServer()
 end

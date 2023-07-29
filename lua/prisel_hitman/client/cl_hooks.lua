@@ -12,3 +12,9 @@ hook.Add("PostGamemodeLoaded", "Prisel:Hitman:PostGamemodeLoaded", function()
 
 	LocalPlayer():RequestConfig()
 end)
+
+
+hook.Add("HUDPaint", "Prisel.Hitman.ReceiveCONFIG", function()
+    LocalPlayer():RequestConfig()
+    hook.Remove("HUDPaint", "Prisel.Hitman.ReceiveCONFIG")
+end)

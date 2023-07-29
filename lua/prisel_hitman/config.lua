@@ -19,7 +19,6 @@ Prisel.Hitman.Config.Name = "Tueur à gages"
 Prisel.Hitman.Config.EnableFakeNPC = true
 
 Prisel.Hitman.Config.Reward = {Min = 1000, Max = 25000}
-Prisel.Hitman.Config.RewardMultiplier = 1.5 -- 25% de chance de gagner 1.5x la récompense
 
 Prisel.Hitman.Config.PossibleSpawn = {}
 
