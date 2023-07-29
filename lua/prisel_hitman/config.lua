@@ -1,6 +1,6 @@
 Prisel = Prisel or {}
 Prisel.Hitman = Prisel.Hitman or {}
-Prisel.Hitman.Contracts = {}
+Prisel.Hitman.Contracts = Prisel.Hitman.Contracts or {}
 Prisel.Hitman.CanModifConfig = {
     ["superadmin"] = true,
 }

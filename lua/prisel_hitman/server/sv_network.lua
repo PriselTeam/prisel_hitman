@@ -10,36 +10,45 @@ for _, netString in ipairs(networkStrings) do
 end
 
 local function handleSendConfig(len, ply)
-    if not Prisel.Hitman.CanModifConfig[ply:GetUserGroup()] then return end
-    local config = net.ReadTable()
-    if not config then return end
-    Prisel.Hitman.Config = config
-    Prisel.Hitman.SaveConfigFile()
+    if Prisel.Hitman.CanModifConfig[ply:GetUserGroup()] then
+        local config = net.ReadTable()
+        if config then
+            Prisel.Hitman.Config = config
+            Prisel.Hitman.SaveConfigFile()
+        end
+    end
 end
 net.Receive("Prisel.Hitman.SendConfig", handleSendConfig)
 
 local function handleRequestConfig(len, ply)
     ply:SendConfig()
+    ply:SendContract()
 end
 net.Receive("Prisel.Hitman.RequestConfig", handleRequestConfig)
 
 local function handleHitmanNetworking(len, ply)
-    local action = net.ReadUInt(4)
-    if action == 1 and ply:CanInteractNPC() then
-        ply:RequestHitman()
-    elseif action == 2 and ply:CanInteractNPC() then
-        local target = net.ReadEntity()
-        if not IsValid(target) then return end
-        local reason = net.ReadString()
-        if not reason then return end
-        if not DarkRP.Library.IsValidReason(reason) then return end
-        local price = net.ReadUInt(20)
-        if not price then return end
-        if not isnumber(price) then return end
-        if price < 0 then return end
-        if price > 1000000 then return end
+    if not ply:CanInteractNPC() then return end
 
-        print("Hitman request", ply, target, reason, price)
+    local action = net.ReadUInt(4)
+    if action == 1 then
+        ply:RequestHitman()
+    elseif action == 2 then
+        local target = net.ReadEntity()
+        if not IsValid(target) or not target:IsPlayer() or target:HasContract() then
+            return
+        end
+
+        local reason = net.ReadString()
+        if not reason or not DarkRP.Library.IsValidReason(reason) then return end
+
+        local price = net.ReadUInt(20)
+        if not price or not isnumber(price) or price < 0 or price > 1000000 then return end
+
+        if not ply:canAfford(price) then return end
+
+        ply:addMoney(-price)
+        target:AddContract(reason, price)
     end
 end
+
 net.Receive("Prisel.Hitman.HitmanNetworking", handleHitmanNetworking)

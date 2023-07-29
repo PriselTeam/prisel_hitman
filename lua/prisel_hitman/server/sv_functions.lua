@@ -42,7 +42,35 @@ function Prisel.Hitman.SendConfigToPlayers()
   net.Broadcast()
 end
 
+function Prisel.Hitman.SendContrats()
+  net.Start("Prisel.Hitman.HitmanNetworking")
+  net.WriteUInt(1, 4)
+  net.WriteTable(Prisel.Hitman.Contracts)
+  net.Broadcast()
+end
+
+function Prisel.Hitman.UpdateContrat(newCtr)
+  net.Start("Prisel.Hitman.HitmanNetworking")
+  net.WriteUInt(2, 4)
+  net.WriteTable(newCtr)
+  net.Broadcast()
+end
+
+function Prisel.Hitman.RemoveContrat(steamid)
+  net.Start("Prisel.Hitman.HitmanNetworking")
+  net.WriteUInt(3, 4)
+  net.WriteString(steamid)
+  net.Broadcast()
+end
+
 local PLAYER = FindMetaTable("Player")
+
+function PLAYER:SendContract()
+  net.Start("Prisel.Hitman.HitmanNetworking")
+  net.WriteUInt(1, 4)
+  net.WriteTable(Prisel.Hitman.Contracts or {})
+  net.Send(self)
+end
 
 function PLAYER:SendConfig()
   local config = Prisel.Hitman.Config
@@ -68,4 +96,33 @@ function PLAYER:CanInteractNPC()
   end
 
   return false
+end
+
+function PLAYER:AddContract(reason, price)
+  if not IsValid(self) then
+    return
+  end
+
+  if self:HasContract() then
+    return
+  end
+
+  local contrat = {
+    Reason = reason,
+    Price = price,
+    Target = self,
+    Timestamp = os.time(),
+  }
+
+  Prisel.Hitman.Contracts[self:SteamID64()] = contrat
+  Prisel.Hitman.UpdateContrat(contrat)
+end
+
+function PLAYER:RemoveContract()
+  if not IsValid(self) then
+    return
+  end
+
+  Prisel.Hitman.Contracts[self:SteamID64()] = nil
+  Prisel.Hitman.RemoveContrat(self:SteamID64())
 end

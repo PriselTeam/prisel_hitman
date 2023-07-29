@@ -274,7 +274,7 @@ function Prisel.Hitman.OpenContracts()
   buttonFaire:SetBackgroundColor(DarkRP.Config.Colors.Blue)
 
   function buttonFaire:DoClick()
-    if LocalPlayer():IsHitman() then
+    if LocalPlayer():IsHitmanMode() then
         notification.AddLegacy("Vous êtes chasseur de primes, vous ne pouvez pas faire de contrat !", NOTIFY_ERROR, 5)
         return
     end
@@ -285,8 +285,6 @@ function Prisel.Hitman.OpenContracts()
     end
 
     local reasonText = reasonEntry:GetText()
-
-    print(reasonText)
 
     if not DarkRP.Library.IsValidReason(reasonText) then
         notification.AddLegacy("La raison est invalide !", NOTIFY_ERROR, 5)
@@ -320,21 +318,22 @@ function Prisel.Hitman.OpenContracts()
         return
     end
 
+
     LocalPlayer():SendContrat(comboboxPlayer:GetSelectedValue(), reasonText, price)
   end
 
   local buttonDevenir = vgui.Create("Prisel.Button", frame)
   buttonDevenir:Dock(TOP)
   buttonDevenir:DockMargin(DarkRP.ScrW * 0.05,0, DarkRP.ScrW * 0.05, 0)
-  buttonDevenir:SetText(LocalPlayer():IsHitman() and "Arrêter la traque" or "Rejoindre les chasseurs de primes")
+  buttonDevenir:SetText(LocalPlayer():IsHitmanMode() and "Arrêter la traque" or "Rejoindre les chasseurs de primes")
   buttonDevenir:SetFont(DarkRP.Library.Font(10))
   buttonDevenir:SetTall(ScrH() * 0.05)
-  buttonDevenir:SetBackgroundColor(LocalPlayer():IsHitman() and DarkRP.Config.Colors.Red or DarkRP.Config.Colors.Green)
+  buttonDevenir:SetBackgroundColor(LocalPlayer():IsHitmanMode() and DarkRP.Config.Colors.Red or DarkRP.Config.Colors.Green)
 
   function buttonDevenir:DoClick()
     LocalPlayer():RequestHitman()
 
-    if not LocalPlayer():IsHitman() then
+    if not LocalPlayer():IsHitmanMode() then
       buttonDevenir:SetText("Arrêter la traque")
       buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Red)
     else
@@ -374,4 +373,131 @@ function PLAYER:SendContrat(target, reason, price)
     net.WriteString(reason)
     net.WriteInt(price, 20)
     net.SendToServer()
+end
+
+function Prisel.Hitman.ShowContracts()
+    if not IsValid(LocalPlayer()) then return end
+    if not LocalPlayer():IsHitmanMode() then return end
+
+    local frame = vgui.Create("Prisel.Frame")
+    frame:SetSize(DarkRP.ScrW * 0.3, DarkRP.ScrH * 0.8)
+    frame:Center()
+    frame:MakePopup()
+    frame:SetTitle("Contrats en cours")
+
+    local labelDesc = vgui.Create("DLabel", frame)
+    labelDesc:Dock(TOP)
+    labelDesc:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.09, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.01)
+    labelDesc:SetText("Liste des contrats en cours")
+    labelDesc:SetFont(DarkRP.Library.Font(12))
+    labelDesc:SetTextColor(color_white)
+    labelDesc:SetContentAlignment(5)
+    labelDesc:SizeToContents()
+
+    local panelList = vgui.Create("DScrollPanel", frame)
+    panelList:Dock(FILL)
+    panelList:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.01)
+
+    for k, v in pairs(Prisel.Hitman.Contracts) do
+        local panel = vgui.Create("DPanel", panelList)
+        panel:Dock(TOP)
+        panel:DockMargin(0,0,0, DarkRP.ScrH * 0.01)
+        panel:SetTall(DarkRP.ScrH * 0.16)
+        function panel:Paint(w,h)
+            draw.RoundedBox(DarkRP.Config.RoundedBoxValue,0,0,w,h, DarkRP.Config.Colors["Secondary"])
+            draw.RoundedBox(DarkRP.Config.RoundedBoxValue,3,3,w-6,h-6, DarkRP.Config.Colors["Main"])
+        end
+
+        local nameLbael = vgui.Create("DLabel", panel)
+        nameLbael:Dock(TOP)
+        nameLbael:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+        nameLbael:SetText("Identité: Inconnu")
+        nameLbael:SetFont(DarkRP.Library.Font(10))
+        nameLbael:SetTextColor(color_white)
+        nameLbael:SetContentAlignment(4)
+        nameLbael:SizeToContents()
+
+        local nameReason = vgui.Create("DLabel", panel)
+        nameReason:Dock(TOP)
+        nameReason:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+        nameReason:SetText("Raison: " ..v.Reason)
+        nameReason:SetFont(DarkRP.Library.Font(10))
+        nameReason:SetTextColor(color_white)
+        nameReason:SetContentAlignment(4)
+        nameReason:SizeToContents()
+
+        local namePrice = vgui.Create("DLabel", panel)
+        namePrice:Dock(TOP)
+        namePrice:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+        namePrice:SetText("Prix: " .. DarkRP.formatMoney(v.Price))
+        namePrice:SetFont(DarkRP.Library.Font(10))
+        namePrice:SetTextColor(color_white)
+        namePrice:SetContentAlignment(4)
+        namePrice:SizeToContents()
+
+        local labelHint = vgui.Create("DLabel", panel)
+        labelHint:Dock(TOP)
+        labelHint:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+        labelHint:SetText(Prisel.Hitman.GenerateHints(v.Target))
+        labelHint:SetFont(DarkRP.Library.Font(10))
+        labelHint:SetTextColor(color_white)
+        labelHint:SetContentAlignment(7)
+        labelHint:SetWrap(true)
+        labelHint:SetAutoStretchVertical(true)
+
+        local _, h = labelHint:GetSize()
+        panel:SetTall(h + DarkRP.ScrH * 0.165)
+
+    end
+end
+
+concommand.Add("prisel_hitman", function()
+    Prisel.Hitman.ShowContracts()
+end)
+
+local coords = {
+    [1] = {
+        coords = Vector(-4616.649902, -5628.497559, 128.031250),
+        label = "Mairie",
+        prefix = "de la"
+    },
+
+    [2] = {
+        coords = Vector(596.441956, 2550.659912, 600.031250),
+        label = "Taco Bell",
+        prefix = "du"
+    }
+}
+
+function getPlayerNearestCoords(target, prefix)
+    local nearest = nil
+    local nearestDist = 0
+
+    for k, v in ipairs(coords) do
+        local dist = target:GetPos():Distance(v.coords)
+        if not nearest or dist < nearestDist then
+            nearest = v
+            nearestDist = dist
+        end
+    end
+
+    if not nearest then return end
+
+    return (prefix and (nearest.prefix .. " ") or "") .. nearest.label
+end
+
+function Prisel.Hitman.GenerateHints(target)
+    local hints = {}
+
+    hints[#hints + 1] = ("Indice : vu près %s"):format(getPlayerNearestCoords(target, true))
+    hints[#hints + 1] = ("Indice : Nom commencant par %s"):format(string.sub(target:Nick(), 1, 2))
+    hints[#hints + 1] = ("Indice : Son job commence par %s"):format(string.sub(team.GetName(target:Team()), 1, 3))
+    if target:Team() == LocalPlayer():Team() then
+        hints[#hints + 1] = ("Indice : Il travail dans le même métier que vous.")
+    end
+
+    local selectHint = math.random(1, #hints)
+    local hint = hints[selectHint]
+
+    return hint
 end
