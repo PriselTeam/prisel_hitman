@@ -57,6 +57,7 @@ function Prisel.Hitman.UpdateContrat(newCtr)
 end
 
 function Prisel.Hitman.RemoveContrat(steamid)
+  print("Remove contract", steamid)
   net.Start("Prisel.Hitman.HitmanNetworking")
   net.WriteUInt(3, 4)
   net.WriteString(steamid)
@@ -124,5 +125,6 @@ function PLAYER:RemoveContract()
   end
 
   Prisel.Hitman.Contracts[self:SteamID64()] = nil
+  print("Remove contract", self:SteamID64())
   Prisel.Hitman.RemoveContrat(self:SteamID64())
 end
