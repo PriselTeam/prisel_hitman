@@ -8,16 +8,29 @@ net.Receive("Prisel.Hitman.OpenMenu", function()
 end)
 
 net.Receive("Prisel.Hitman.HitmanNetworking", function()
-  local iiAction = net.ReadUInt(4)
+  local iAction = net.ReadUInt(4)
   if iAction == 1 then
     local contrat = net.ReadTable()
     Prisel.Hitman.Contracts = contrat
   elseif iAction == 2 then
-    local contrat = net.ReadTable()
-    if not IsValid(contrat.Target) then return end
-    local iID64 = contrat.Target
+
+    local pTarget = net.ReadEntity()
+    local iPrice = net.ReadUInt(8)
+    local sReason = net.ReadString()
+    local iID64 = net.ReadString()
+
+    if not IsValid(pTarget) then return end
+
     Prisel.Hitman.Contracts = Prisel.Hitman.Contracts or {}
+
+    local contrat = {
+      Target = pTarget,
+      Price = iPrice,
+      Reason = sReason
+    }
+
     Prisel.Hitman.Contracts[iID64] = contrat
+
   elseif iAction == 3 then
     local iID64 = net.ReadString()
     Prisel.Hitman.Contracts[iID64] = nil

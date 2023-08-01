@@ -50,14 +50,22 @@ function Prisel.Hitman.SendContrats()
 end
 
 function Prisel.Hitman.UpdateContrat(newCtr)
+  if not IsValid(newCtr.Target) then
+    return
+  end
+
+  local sSteamID64 = newCtr.Target:SteamID64()
+
   net.Start("Prisel.Hitman.HitmanNetworking")
   net.WriteUInt(2, 4)
-  net.WriteTable(newCtr)
+    net.WriteEntity(newCtr.Target)
+    net.WriteUInt(newCtr.Price, 8)
+    net.WriteString(newCtr.Reason)
+    net.WriteString(sSteamID64)
   net.Broadcast()
 end
 
 function Prisel.Hitman.RemoveContrat(steamid)
-  print("Remove contract", steamid)
   net.Start("Prisel.Hitman.HitmanNetworking")
   net.WriteUInt(3, 4)
   net.WriteString(steamid)
@@ -99,7 +107,7 @@ function PLAYER:CanInteractNPC()
   return false
 end
 
-function PLAYER:AddContract(reason, price)
+function PLAYER:AddContract(reason, price, caller)
   if not IsValid(self) then
     return
   end
@@ -109,6 +117,7 @@ function PLAYER:AddContract(reason, price)
   end
 
   local contrat = {
+    Caller = caller,
     Reason = reason,
     Price = price,
     Target = self,
@@ -125,6 +134,5 @@ function PLAYER:RemoveContract()
   end
 
   Prisel.Hitman.Contracts[self:SteamID64()] = nil
-  print("Remove contract", self:SteamID64())
   Prisel.Hitman.RemoveContrat(self:SteamID64())
 end

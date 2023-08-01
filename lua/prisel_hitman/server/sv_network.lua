@@ -47,7 +47,8 @@ local function handleHitmanNetworking(len, ply)
         if not ply:canAfford(price) then return end
 
         ply:addMoney(-price)
-        target:AddContract(reason, price)
+        target:AddContract(reason, price, ply)
+        DarkRP.notify(ply, 0, 4, ("Votre prime sur %s à bien été envoyé."):format(target:Nick()))
     end
 end
 
