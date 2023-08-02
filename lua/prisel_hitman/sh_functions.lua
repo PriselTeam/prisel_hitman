@@ -23,6 +23,7 @@ function PLAYER:RequestHitman()
     self:SetNWBool("PRSL:HitmanValue", not self:IsHitmanMode())
     if self:IsHitmanMode() then
       DarkRP.notify(self, 0, 4, "Vous êtes maintenant un chasseur de prime.")
+      DarkRP.notify(self, 0, 4, "Appuyez sur F2 pour voir les contrats disponibles.")
     else
       DarkRP.notify(self, 1, 4, "Vous avez arrêtez la traque.")
     end

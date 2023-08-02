@@ -229,8 +229,10 @@ function Prisel.Hitman.OpenContracts()
   reasonEntry:SetDrawLanguageID(false)
 
   function reasonEntry:Paint(w, h)
-    draw.RoundedBox(DarkRP.Config.RoundedBoxValue, 0, 0, w, h, DarkRP.Config.Colors.Secondary)
-    draw.RoundedBox(DarkRP.Config.RoundedBoxValue, 1.5, 1.5, w-3, h-3, DarkRP.Config.Colors.Main)
+    local x, y = self:LocalToScreen(0, 0)
+    BSHADOWS.BeginShadow()
+        draw.RoundedBox(DarkRP.Config.RoundedBoxValue, x, y, w, h, DarkRP.Config.Colors.Main)
+    BSHADOWS.EndShadow(1, 2, 2, 255, 0, 0)
     self:DrawTextEntryText(color_white, DarkRP.Config.Colors.Secondary, color_white)
   end
 
@@ -251,8 +253,10 @@ function Prisel.Hitman.OpenContracts()
   priceEntry:SetDrawLanguageID(false)
 
   function priceEntry:Paint(w, h)
-    draw.RoundedBox(DarkRP.Config.RoundedBoxValue, 0, 0, w, h, DarkRP.Config.Colors.Secondary)
-    draw.RoundedBox(DarkRP.Config.RoundedBoxValue, 1.5, 1.5, w-3, h-3, DarkRP.Config.Colors.Main)
+    local x, y = self:LocalToScreen(0, 0)
+    BSHADOWS.BeginShadow()
+        draw.RoundedBox(DarkRP.Config.RoundedBoxValue, x, y, w, h, DarkRP.Config.Colors.Main)
+    BSHADOWS.EndShadow(1, 2, 2, 255, 0, 0)
     self:DrawTextEntryText(color_white, DarkRP.Config.Colors.Secondary, color_white)
   end
 
@@ -342,14 +346,6 @@ function Prisel.Hitman.OpenContracts()
       buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Green)
     end
   end
-
-  hook.Add("HUDPaint", "Prisel.Hitman.PaintContract", function()
-    if not IsValid(frame) then hook.Remove("HUDPaint", "Prisel.Hitman.PaintContract") return end
-    local target = comboboxPlayer:GetSelectedValue()
-    if IsValid(target) then
-    draw.SimpleTextOutlined("Contrat : " .. target:Nick(), DarkRP.Library.Font(15,0, "Montserrat Bold"), ScrW()/2, ScrH() * 0.02, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, color_black)
-    end
-  end)
 end
 
 local PLAYER = FindMetaTable("Player")
@@ -402,13 +398,16 @@ function Prisel.Hitman.ShowContracts()
     PrintTable(Prisel.Hitman.Contracts)
 
     for k, v in pairs(Prisel.Hitman.Contracts) do
+
+        if not IsValid(v.Target) then continue end
+
         local panel = vgui.Create("DPanel", panelList)
         panel:Dock(TOP)
         panel:DockMargin(0,0,0, DarkRP.ScrH * 0.01)
         panel:SetTall(DarkRP.ScrH * 0.16)
         function panel:Paint(w,h)
             draw.RoundedBox(DarkRP.Config.RoundedBoxValue,0,0,w,h, DarkRP.Config.Colors["Secondary"])
-            draw.RoundedBox(DarkRP.Config.RoundedBoxValue,3,3,w-6,h-6, DarkRP.Config.Colors["Main"])
+            draw.RoundedBox(DarkRP.Config.RoundedBoxValue,2,2,w-4,h-4, DarkRP.Config.Colors["Main"])
         end
 
         local nameLbael = vgui.Create("DLabel", panel)
@@ -454,110 +453,19 @@ function Prisel.Hitman.ShowContracts()
     end
 end
 
-concommand.Add("prisel_hitman", function()
-    Prisel.Hitman.ShowContracts()
-end)
+hook.Add("PlayerBindPress", "Prisel.Hitman.PlayerBindPress", function(ply, bind, press)
+    if not IsValid(ply) then return end
+    if not ply:IsHitmanMode() then return end
 
-local coords = {
-    [1] = {
-        coords = Vector(-4616.649902, -5628.497559, 128.031250),
-        label = "Mairie",
-        prefix = "de la"
-    },
-
-    [2] = {
-        coords = Vector(596.441956, 2550.659912, 600.031250),
-        label = "Taco Bell",
-        prefix = "du"
-    },
-    [3] = {
-        coords = Vector(8636.323242, 3455.560303, 1608.031250),
-        label = "Quartier Riche",
-        prefix = "du"
-    },
-    [4] = {
-        coords = Vector(14326.209961, 14005.297852, 235.738342),
-        label = "Falaise",
-        prefix = "la"
-    },
-    [5] = {
-        coords = Vector(-7980.475098, 7036.668457, 64.031250),
-        label = "Zone industrielle",
-        prefix = "de la"
-    },
-    [6] = {
-        coords = Vector(-8072.026855, -5663.893066, 64.031250),
-        label = "Poste de police",
-        prefix = "du"
-    },
-    [7] = {
-        coords = Vector(-3539.265137, -7654.824707, 64.031250),
-        label = "HLM Mairie",
-        prefix = "des"
-    },
-    [8] = {
-        coords = Vector(-242.758942, -5866.217285, 128.031250),
-        label = "Hôpital",
-        prefix = "de l'"
-    },
-    [9] = {
-        coords = Vector(-3820.596436, -3395.339600, 96.031250),
-        label = "Banque",
-        prefix = "de la"
-    },
-    [10] = {
-        coords = Vector(-4552.938477, -600.031250, 64.031250),
-        label = "Concessionnaire",
-        prefix = "du "
-    },
-    [11] = {
-        coords = Vector(-5182.868164, -3336.251953, 72.031250),
-        label = "Caserne de pompiers",
-        prefix = "de la "
-    },
-    [12] = {
-        coords = Vector(898.114990, 3934.589844, 608.031250),
-        label = "Station Shell | Taco Bell",
-        prefix = "de la "
-    },
-    [13] = {
-        coords = Vector(-123.420822, 9109.810547, 608.031250),
-        label = "HLM Taco Bell",
-        prefix = "des"
-    },
-    [14] = {
-        coords = Vector(-8297.350586, -14031.585938, 208.031250),
-        label = "Maison de campagne",
-        prefix = "de la"
-    },
-    [15] = {
-        coords = Vector(-8297.350586, -14031.585938, 208.031250),
-        label = "Chalets",
-        prefix = "des"
-    },
-}
-
-function getPlayerNearestCoords(target, prefix)
-    local nearest = nil
-    local nearestDist = 0
-
-    for k, v in ipairs(coords) do
-        local dist = target:GetPos():Distance(v.coords)
-        if not nearest or dist < nearestDist then
-            nearest = v
-            nearestDist = dist
-        end
+    if bind == "gm_showteam" and press then
+        Prisel.Hitman.ShowContracts()
     end
-
-    if not nearest then return end
-
-    return (prefix and (nearest.prefix .. " ") or "") .. nearest.label
-end
+end)
 
 function Prisel.Hitman.GenerateHints(target)
     local hints = {}
 
-    hints[#hints + 1] = ("Indice : vu près %s"):format(getPlayerNearestCoords(target, true))
+    hints[#hints + 1] = ("Indice : vu près %s"):format(Prisel.GPS:GetNameLocation(target, true))
     -- hints[#hints + 1] = ("Indice : Nom commencant par %s"):format(string.sub(target:Nick(), 1, 2))
     -- hints[#hints + 1] = ("Indice : Son job commence par %s"):format(string.sub(team.GetName(target:Team()), 1, 3))
     -- if target:Team() == LocalPlayer():Team() then
