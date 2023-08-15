@@ -372,105 +372,103 @@ function PLAYER:SendContrat(target, reason, price)
     net.SendToServer()
 end
 
-function Prisel.Hitman.ShowContracts()
-    if not IsValid(LocalPlayer()) then return end
-    if not LocalPlayer():IsHitmanMode() then return end
+-- function Prisel.Hitman.ShowContracts()
+--     if not IsValid(LocalPlayer()) then return end
+--     if not LocalPlayer():IsHitmanMode() then return end
 
-    local frame = vgui.Create("Prisel.Frame")
-    frame:SetSize(DarkRP.ScrW * 0.3, DarkRP.ScrH * 0.8)
-    frame:Center()
-    frame:MakePopup()
-    frame:SetTitle("Contrats en cours")
+--     local frame = vgui.Create("Prisel.Frame")
+--     frame:SetSize(DarkRP.ScrW * 0.3, DarkRP.ScrH * 0.8)
+--     frame:Center()
+--     frame:MakePopup()
+--     frame:SetTitle("Contrats en cours")
 
-    local labelDesc = vgui.Create("DLabel", frame)
-    labelDesc:Dock(TOP)
-    labelDesc:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.09, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.01)
-    labelDesc:SetText("Liste des contrats en cours")
-    labelDesc:SetFont(DarkRP.Library.Font(12))
-    labelDesc:SetTextColor(color_white)
-    labelDesc:SetContentAlignment(5)
-    labelDesc:SizeToContents()
+--     local labelDesc = vgui.Create("DLabel", frame)
+--     labelDesc:Dock(TOP)
+--     labelDesc:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.09, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.01)
+--     labelDesc:SetText("Liste des contrats en cours")
+--     labelDesc:SetFont(DarkRP.Library.Font(12))
+--     labelDesc:SetTextColor(color_white)
+--     labelDesc:SetContentAlignment(5)
+--     labelDesc:SizeToContents()
 
-    local panelList = vgui.Create("DScrollPanel", frame)
-    panelList:Dock(FILL)
-    panelList:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.01)
+--     local panelList = vgui.Create("DScrollPanel", frame)
+--     panelList:Dock(FILL)
+--     panelList:DockMargin(DarkRP.ScrW * 0.05,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.05, DarkRP.ScrH * 0.01)
 
-    PrintTable(Prisel.Hitman.Contracts)
+--     for k, v in pairs(Prisel.Hitman.Contracts) do
 
-    for k, v in pairs(Prisel.Hitman.Contracts) do
+--         if not IsValid(v.Target) then continue end
 
-        if not IsValid(v.Target) then continue end
+--         local panel = vgui.Create("DPanel", panelList)
+--         panel:Dock(TOP)
+--         panel:DockMargin(0,0,0, DarkRP.ScrH * 0.01)
+--         panel:SetTall(DarkRP.ScrH * 0.16)
+--         function panel:Paint(w,h)
+--             draw.RoundedBox(DarkRP.Config.RoundedBoxValue,0,0,w,h, DarkRP.Config.Colors["Secondary"])
+--             draw.RoundedBox(DarkRP.Config.RoundedBoxValue,2,2,w-4,h-4, DarkRP.Config.Colors["Main"])
+--         end
 
-        local panel = vgui.Create("DPanel", panelList)
-        panel:Dock(TOP)
-        panel:DockMargin(0,0,0, DarkRP.ScrH * 0.01)
-        panel:SetTall(DarkRP.ScrH * 0.16)
-        function panel:Paint(w,h)
-            draw.RoundedBox(DarkRP.Config.RoundedBoxValue,0,0,w,h, DarkRP.Config.Colors["Secondary"])
-            draw.RoundedBox(DarkRP.Config.RoundedBoxValue,2,2,w-4,h-4, DarkRP.Config.Colors["Main"])
-        end
+--         local nameLbael = vgui.Create("DLabel", panel)
+--         nameLbael:Dock(TOP)
+--         nameLbael:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+--         nameLbael:SetText("Identité: Inconnu")
+--         nameLbael:SetFont(DarkRP.Library.Font(10))
+--         nameLbael:SetTextColor(color_white)
+--         nameLbael:SetContentAlignment(4)
+--         nameLbael:SizeToContents()
 
-        local nameLbael = vgui.Create("DLabel", panel)
-        nameLbael:Dock(TOP)
-        nameLbael:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
-        nameLbael:SetText("Identité: Inconnu")
-        nameLbael:SetFont(DarkRP.Library.Font(10))
-        nameLbael:SetTextColor(color_white)
-        nameLbael:SetContentAlignment(4)
-        nameLbael:SizeToContents()
+--         local nameReason = vgui.Create("DLabel", panel)
+--         nameReason:Dock(TOP)
+--         nameReason:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+--         nameReason:SetText("Raison: " ..v.Reason)
+--         nameReason:SetFont(DarkRP.Library.Font(10))
+--         nameReason:SetTextColor(color_white)
+--         nameReason:SetContentAlignment(4)
+--         nameReason:SizeToContents()
 
-        local nameReason = vgui.Create("DLabel", panel)
-        nameReason:Dock(TOP)
-        nameReason:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
-        nameReason:SetText("Raison: " ..v.Reason)
-        nameReason:SetFont(DarkRP.Library.Font(10))
-        nameReason:SetTextColor(color_white)
-        nameReason:SetContentAlignment(4)
-        nameReason:SizeToContents()
+--         local namePrice = vgui.Create("DLabel", panel)
+--         namePrice:Dock(TOP)
+--         namePrice:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+--         namePrice:SetText("Prix: " .. DarkRP.formatMoney(v.Price))
+--         namePrice:SetFont(DarkRP.Library.Font(10))
+--         namePrice:SetTextColor(color_white)
+--         namePrice:SetContentAlignment(4)
+--         namePrice:SizeToContents()
 
-        local namePrice = vgui.Create("DLabel", panel)
-        namePrice:Dock(TOP)
-        namePrice:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
-        namePrice:SetText("Prix: " .. DarkRP.formatMoney(v.Price))
-        namePrice:SetFont(DarkRP.Library.Font(10))
-        namePrice:SetTextColor(color_white)
-        namePrice:SetContentAlignment(4)
-        namePrice:SizeToContents()
+--         local labelHint = vgui.Create("DLabel", panel)
+--         labelHint:Dock(TOP)
+--         labelHint:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
+--         labelHint:SetText(Prisel.Hitman.GenerateHints(v.Target))
+--         labelHint:SetFont(DarkRP.Library.Font(10))
+--         labelHint:SetTextColor(color_white)
+--         labelHint:SetContentAlignment(7)
+--         labelHint:SetWrap(true)
+--         labelHint:SetAutoStretchVertical(true)
 
-        local labelHint = vgui.Create("DLabel", panel)
-        labelHint:Dock(TOP)
-        labelHint:DockMargin(DarkRP.ScrW * 0.005,DarkRP.ScrH * 0.01, DarkRP.ScrW * 0.005, 0)
-        labelHint:SetText(Prisel.Hitman.GenerateHints(v.Target))
-        labelHint:SetFont(DarkRP.Library.Font(10))
-        labelHint:SetTextColor(color_white)
-        labelHint:SetContentAlignment(7)
-        labelHint:SetWrap(true)
-        labelHint:SetAutoStretchVertical(true)
+--         local _, h = labelHint:GetSize()
+--         panel:SetTall(h + DarkRP.ScrH * 0.165)
 
-        local _, h = labelHint:GetSize()
-        panel:SetTall(h + DarkRP.ScrH * 0.165)
+--     end
+-- end
 
-    end
-end
+-- hook.Add("PlayerBindPress", "Prisel.Hitman.PlayerBindPress", function(ply, bind, press)
+--     if not IsValid(ply) then return end
+--     if not ply:IsHitmanMode() then return end
 
-hook.Add("PlayerBindPress", "Prisel.Hitman.PlayerBindPress", function(ply, bind, press)
-    if not IsValid(ply) then return end
-    if not ply:IsHitmanMode() then return end
-
-    if bind == "gm_showteam" and press then
-        Prisel.Hitman.ShowContracts()
-    end
-end)
+--     if bind == "gm_showteam" and press then
+--         Prisel.Hitman.ShowContracts()
+--     end
+-- end)
 
 function Prisel.Hitman.GenerateHints(target)
     local hints = {}
 
     hints[#hints + 1] = ("Indice : vu près %s"):format(Prisel.GPS:GetNameLocation(target, true))
-    -- hints[#hints + 1] = ("Indice : Nom commencant par %s"):format(string.sub(target:Nick(), 1, 2))
-    -- hints[#hints + 1] = ("Indice : Son job commence par %s"):format(string.sub(team.GetName(target:Team()), 1, 3))
-    -- if target:Team() == LocalPlayer():Team() then
-        -- hints[#hints + 1] = ("Indice : Il travail dans le même métier que vous.")
-    -- end
+    hints[#hints + 1] = ("Indice : Nom commencant par %s"):format(string.sub(target:Nick(), 1, 2))
+    hints[#hints + 1] = ("Indice : Son job commence par %s"):format(string.sub(team.GetName(target:Team()), 1, 3))
+    if target:Team() == LocalPlayer():Team() then
+        hints[#hints + 1] = ("Indice : Il travail dans le même métier que vous.")
+    end
 
     local selectHint = math.random(1, #hints)
     local hint = hints[selectHint]
