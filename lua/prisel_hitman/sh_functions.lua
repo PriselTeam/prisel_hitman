@@ -27,6 +27,8 @@ function PLAYER:RequestHitman()
     else
       DarkRP.notify(self, 1, 4, "Vous avez arrêtez la traque.")
     end
+
+    hook.Run("Prisel.Hitman.PlayerBeHitman", self)
   end
 end
 
