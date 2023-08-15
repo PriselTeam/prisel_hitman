@@ -126,6 +126,7 @@ function PLAYER:AddContract(reason, price, caller)
 
   Prisel.Hitman.Contracts[self:SteamID64()] = contrat
   Prisel.Hitman.UpdateContrat(contrat)
+  hook.Run("Prisel.Hitman.PlayerAddContract", self, contrat)
 end
 
 function PLAYER:RemoveContract()
@@ -133,6 +134,8 @@ function PLAYER:RemoveContract()
     return
   end
 
+  hook.Run("Prisel.Hitman.PlayerRemovedContract", self)
   Prisel.Hitman.Contracts[self:SteamID64()] = nil
   Prisel.Hitman.RemoveContrat(self:SteamID64())
+
 end

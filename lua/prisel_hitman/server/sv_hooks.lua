@@ -10,18 +10,21 @@ hook.Add("PlayerDeath", "PriselHitman:PlayerDeath", function(victim, inf, attack
 	if IsValid(attack) then
 
 		if attack:IsHitmanMode() and victim:IsValid() and Prisel.Hitman.Contracts[victim:SteamID64()] then
+
 			local contrat = Prisel.Hitman.Contracts[victim:SteamID64()]
 
-			if attack == contrat.Caller then
-				return
-			end
+			-- if attack == contrat.Caller then
+				-- return
+			-- end
 
 
 			if not tonumber(contrat.Price) then return end
 			attack:addMoney(contrat.Price)
 			DarkRP.notify(attack, 0, 4, "Vous avez gagné " .. DarkRP.formatMoney(contrat.Price).." pour avoir tué " .. victim:Nick() .. " !")
 			DarkRP.notify(contrat.Caller, 0, 4, "Votre contrat sur " .. victim:Nick() .. " a été rempli !")
+			hook.Run("Prisel.Hitman.ContractCompleted", contrat.Caller, attack, victim, contrat.Price)
 			victim:RemoveContract()
+
 		end
 
 	end
@@ -31,4 +34,8 @@ hook.Add("PlayerDeath", "PriselHitman:PlayerDeath", function(victim, inf, attack
 		victim:RemoveContract()
 	end
 
+end)
+
+hook.Add("PlayerDisconnected", "PriselHitman:PlayerDisconnected", function(pPly)
+	pPly:RemoveContract()
 end)
