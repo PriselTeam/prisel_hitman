@@ -25,3 +25,5 @@ else
 	Include("client/cl_network.lua")
 
 end
+
+resource.AddFile("materials/prisel_hitman/logo_prisel_hitman.png")
