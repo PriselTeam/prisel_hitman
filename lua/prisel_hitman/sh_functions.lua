@@ -34,11 +34,9 @@ end
 
 function PLAYER:HasContract()
   if not IsValid(self) then
-    print("HasContract - Invalid player")
     return false
   end
 
   local hasContract = Prisel.Hitman.Contracts[self:SteamID64()] ~= nil
-  print("HasContract - Player has contract:", hasContract)
   return hasContract
 end
