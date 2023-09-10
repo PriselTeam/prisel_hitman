@@ -1,6 +1,6 @@
 TEAM_HITMAN = DarkRP.createJob( "Tueur à gages", {
     color = Color( 238, 69, 69),
-    category = "Metiers illégaux",
+    category = "Métiers illégaux",
     model = {
         "models/player/group01/male_01.mdl",
         "models/player/group01/male_02.mdl",
