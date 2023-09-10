@@ -15,12 +15,3 @@ TEAM_HITMAN = DarkRP.createJob( "Tueur à gages", {
     vote = false,
     hasLicense = false,
 } )
-
--- DarkRP.createEntity( "Stand", {
---     ent = "cardealer_stand",
---     model = "models/stim/venatuss/car_dealer/stand.mdl",
---     price = 1000,
---     max = 5,
---     cmd = "cardealer_stand",
---     allowed = { TEAM_CARDEALER }
--- })

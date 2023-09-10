@@ -326,26 +326,6 @@ function Prisel.Hitman.OpenContracts()
     LocalPlayer():SendContrat(comboboxPlayer:GetSelectedValue(), reasonText, price)
     frame:Close()
   end
-
-  local buttonDevenir = vgui.Create("Prisel.Button", frame)
-  buttonDevenir:Dock(TOP)
-  buttonDevenir:DockMargin(DarkRP.ScrW * 0.05,0, DarkRP.ScrW * 0.05, 0)
-  buttonDevenir:SetText(LocalPlayer():IsHitmanMode() and "Arrêter la traque" or "Rejoindre les chasseurs de primes")
-  buttonDevenir:SetFont(DarkRP.Library.Font(10))
-  buttonDevenir:SetTall(ScrH() * 0.05)
-  buttonDevenir:SetBackgroundColor(LocalPlayer():IsHitmanMode() and DarkRP.Config.Colors.Red or DarkRP.Config.Colors.Green)
-
-  function buttonDevenir:DoClick()
-    LocalPlayer():RequestHitman()
-
-    if not LocalPlayer():IsHitmanMode() then
-      buttonDevenir:SetText("Arrêter la traque")
-      buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Red)
-    else
-      buttonDevenir:SetText("Rejoindre les chasseurs de primes")
-      buttonDevenir:SetBackgroundColor(DarkRP.Config.Colors.Green)
-    end
-  end
 end
 
 local PLAYER = FindMetaTable("Player")

@@ -39,3 +39,7 @@ end)
 hook.Add("PlayerDisconnected", "PriselHitman:PlayerDisconnected", function(pPly)
 	pPly:RemoveContract()
 end)
+
+hook.Add("PlayerChangedTeam", "PriselHitman:PlayerChangedTeam", function(pPly, oldTeam, newTeam)
+	print(pPly, oldTeam, newTeam)
+end)
