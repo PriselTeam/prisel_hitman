@@ -1,17 +1,15 @@
-TEAM_HITMAN = DarkRP.createJob( "Tueur à gages", {
-    color = Color( 238, 69, 69),
-    category = "Métiers illégaux",
-    model = {
-        "models/player/group01/male_01.mdl",
-        "models/player/group01/male_02.mdl",
-        "models/player/group01/male_03.mdl"
-    },
-    description = [[Le tueur à gages est un tueur professionnel qui est payé pour tuer des gens.]],
-    weapons = { "prisel_jumelles" },
-    command = "hitman_prisel",
+TEAM_HITMAN = DarkRP.createJob("*VIP* Tueur à gages", {
+    color = Color(39, 174, 96),
+    model = defaultCitizensModels,
+    description = [[Vous exécutez des contrats contre rémunération, assurez vous d'avoir une raison valable de votre client pour faire votre travail.]],
+    weapons = {"grappin","tfa_nmrih_mkiii"},
+    command = "mob",
     max = 2,
-    salary = 0,
-    admin = 0,
-    vote = false,
-    hasLicense = false,
-} )
+    salary = 1000,
+    category = "Métiers illégaux",
+    customCheck = function(ply) return CLIENT or
+        (ply:PIsVIP() or ply:PIsStaff())
+    end,
+    CustomCheckFailMsg = "Ce métier est VIP !",
+    
+})
